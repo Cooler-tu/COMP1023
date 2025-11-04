@@ -1,3 +1,7 @@
-import mymath
-print(mymath.add(3, 5))
-print(__name__)
+x = 10
+
+def a():
+    print(x)
+
+a()
+print(x)

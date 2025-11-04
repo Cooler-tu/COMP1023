@@ -1,0 +1,21 @@
+创建git
+git init
+
+加入git
+git add <文件名>
+git add *.py
+
+上传
+git commit -m "备注"
+
+上传到github
+git push -u origin <branch名称>
+
+新建branch
+git branch <branch名称>
+
+切换branch
+git checkout <branch名称>
+
+查看上传情况
+git log
