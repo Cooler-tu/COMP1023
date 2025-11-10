@@ -9,6 +9,8 @@ Instructions:
 - Test your code using maze_tester.py (GUI)
 """
 
+import copy
+
 # Direction for reference
 DIRECTIONS = ['R', 'L', 'U', 'D']
 DELTA = [[1, 0], [-1, 0], [0, -1], [0, 1]]
@@ -42,18 +44,18 @@ def parse_maze(maze):
     teleport_index : dict[str, int] = {}
 
     for i in range(len(maze)):
-        if 'S' in i:
-            index_s = [i, i.index('S')]
-        if 'E' in i:
-            index_e = [i, i.index('E')]
+        if 'S' in maze[i]:
+            index_s = [maze[i].index('S'), i]
+        if 'E' in maze[i]:
+            index_e = [maze[i].index('E'), i]
         for j in range(len(maze[i])):
             x = maze[i][j]
             if x >= 'A' and x <= 'Z' and x != 'S' and x != 'E':
                 if x in teleport_index:
-                    teleport_info[teleport_index[x]].append([i,j])
+                    teleport_info[teleport_index[x]].append([j,i])
                 else:
-                    teleport_info.append([x, [i, j]])
-                    teleport_index[x] = len(teleport_info)
+                    teleport_info.append([x, [j, i]])
+                    teleport_index[x] = len(teleport_info)-1
     teleport_info.sort(key = lambda x: ord(x[0]))
     for i in teleport_info:
         if len(i) > 3:
@@ -83,39 +85,47 @@ def dfs_helper_shortest(maze, end, teleport_info, height, width,
 
     # Base case: in this branch, we have reached the end position
     # this path is apparently the best path found in this branch
+    
     if current_pos == end:
         return current_path[:]
-
-    best_path = []
         
+    best_path = []
+
     for direction in DIRECTIONS:
-        next_pos = None
         delta = DELTA[DIRECTIONS.index(direction)]
 
         # TODO: Calculate next_pos using delta
         # ------- Modify the line below -------
-        next_pos[0] += delta[0]
-        next_pos[1] += delta[1]
+        next_pos: list = [current_pos[0]+delta[0], current_pos[1]+delta[1]]
         # ------- Modify the line above -------
 
         # TODO: Validate if next_pos is within bounds, not a wall, and not visited
         # ------- Modify the line below -------
-        if maze[next_pos[0]][next_pos[1]] == '#' \
-        or next_pos[0] < 0 or next_pos[0] >= len(maze) \
-        or next_pos[1] < 0 or next_pos[1] >= len(maze[0]):
+        if maze[next_pos[1]][next_pos[0]] == '#' \
+        or next_pos[0] < 0 or next_pos[0] >= width \
+        or next_pos[1] < 0 or next_pos[1] >= height \
+        or next_pos in visited:
             continue
-        visited.append(next_pos)
         # ------- Modify the line above -------
 
         # TODO: Handle teleporter if next_pos is a teleporter, update next_pos accordingly
         #       and validate if the teleported position is visited again if teleported
         # ------- Modify the line below -------
+        tmp = False
         for i in teleport_info:
             if i[1] == next_pos and (i[2] not in visited):
                 next_pos = i[2]
+                visited.append(i[1])
+                tmp = True
+                x = i[1]
+                y = i[2]
                 break
             if i[2] == next_pos and (i[1] not in visited):
                 next_pos = i[1]
+                tmp = True
+                visited.append(i[2])
+                x = i[1]
+                y = i[2]
                 break
 
         # ------- Modify the line above ---------
@@ -123,7 +133,7 @@ def dfs_helper_shortest(maze, end, teleport_info, height, width,
         # TODO: Update visited and current_path, prepare for recursive call
         # ------- Modify the line below -------
         visited.append(next_pos)
-        current_path.append(next_pos)
+        current_path.append(direction)
         # ------- Modify the line above -------
 
         path = dfs_helper_shortest(maze, end, teleport_info, height, width, 
@@ -131,12 +141,16 @@ def dfs_helper_shortest(maze, end, teleport_info, height, width,
         
         if path:
             if (not best_path) or (len(path) < len(best_path)):
-                best_path = path
+                best_path = copy.deepcopy(path)
 
         # TODO: Backtrack - undo changes to visited and current_path
         # ------- Modify the line below -------
-        visited.remove(next_pos)
-        current_path.remove(next_pos)
+        if tmp:
+            visited.remove(x)
+            visited.remove(y)
+        else:
+            visited.remove(next_pos)
+        current_path.pop()
         # ------- Modify the line above -------
 
     return best_path
@@ -180,28 +194,38 @@ def dfs_helper_max_score(maze, end, teleport_info, height, width,
     for direction in DIRECTIONS:
         # TODO: Calculate and validate next_pos
         # ------- Modify the line below -------
-        next_pos = [current_pos[0]+direction[0], current_pos[1]+direction[1]]
+        delta = DELTA[DIRECTIONS.index(direction)]
+        next_pos: list = [current_pos[0]+delta[0], current_pos[1]+delta[1]]
         # ------- Modify the line above -------
 
         # TODO: Update parameters, do recursive call
         # ------- Modify the line below -------
-        if maze[next_pos[0]][next_pos[1]] == '#' \
-        or next_pos[0] < 0 or next_pos[0] >= len(maze) \
-        or next_pos[1] < 0 or next_pos[1] >= len(maze[0]):
+        if maze[next_pos[1]][next_pos[0]] == '#' \
+        or next_pos[0] < 0 or next_pos[0] >= width \
+        or next_pos[1] < 0 or next_pos[1] >= height \
+        or next_pos in visited:
             continue
-        visited.append(next_pos)
         
+        tmp = False
         for i in teleport_info:
             if i[1] == next_pos and (i[2] not in visited):
                 next_pos = i[2]
+                visited.append(i[1])
+                tmp = True
+                x = i[1]
+                y = i[2]
                 break
             if i[2] == next_pos and (i[1] not in visited):
                 next_pos = i[1]
+                tmp = True
+                visited.append(i[2])
+                x = i[1]
+                y = i[2]
                 break
 
         visited.append(next_pos)
-        current_path.append(next_pos)
-        val = maze[next_pos[0]][next_pos[1]]
+        current_path.append(direction)
+        val = maze[next_pos[1]][next_pos[0]]
         if val >= '0' and val <= '9':
             current_score += int(val)
 
@@ -213,12 +237,18 @@ def dfs_helper_max_score(maze, end, teleport_info, height, width,
 
         # TODO: Update the best path and maximum score, and do the backtracking
         # ------- Modify the line below -------
-        if path:
-            if current_score > max_score:
-                best_path = path
-        visited.remove(next_pos)
-        current_path.remove(next_pos)
-        current_score -= int(val)
+        if path[0]:
+            if path[1] > max_score:
+                best_path = copy.deepcopy(path[0])
+                max_score = path[1]
+        current_path.pop()
+        if val >= '0' and val <= '9':
+            current_score -= int(val)
+        if tmp:
+            visited.remove(x)
+            visited.remove(y)
+        else:
+            visited.remove(next_pos)
         # ------- Modify the line above -------
 
     return best_path, max_score
