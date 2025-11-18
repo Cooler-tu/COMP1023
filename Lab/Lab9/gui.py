@@ -65,14 +65,16 @@ class OtsuApp:
 
         self.image = None  # Store the original image
         self.gray_image = None  # Store the grayscale image
+        self.original_image = None # Store the original image
 
     def load_image(self):
         file_path = filedialog.askopenfilename(title="Select an Image", 
                                                 filetypes=(("Image Files", "*.png *.jpg *.jpeg *.bmp *.gif"),))
         if file_path:
             try:
-                self.image = Image.open(file_path)
+                self.image = Image.open(file_path)                
                 self.gray_image = convert_to_grayscale(self.image)  # Convert to grayscale
+                self.original_image = self.gray_image.copy()
                 self.show_image(self.gray_image, self.original_canvas)  # Display the grayscale image as original
 
                 # Resize the processed image canvas to match the original image size
@@ -103,7 +105,7 @@ class OtsuApp:
 
     def apply_otsu(self):
         if self.gray_image:
-            pixel_array = np.array(self.gray_image)  # Convert to a 2D NumPy array
+            pixel_array = np.array(self.original_image)  # Convert to a 2D NumPy array
 
             binary_image_array, threshold = otsu_thresholding(pixel_array)  # Pass the NumPy array
 
