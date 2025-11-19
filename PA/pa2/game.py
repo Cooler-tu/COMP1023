@@ -107,7 +107,7 @@ class Game:
         for d in Direction:
             self.tanks[0].stop_tank(d)
             self.tanks[1].stop_tank(d)
-        self.map()
+        self.map = create_map(read_from_file(self.map_file))
         self.tanks = [
             Tank(self, x, y, i) for i, (x, y) in self.map.tank_position_map.items()
         ]

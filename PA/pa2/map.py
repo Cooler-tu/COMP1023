@@ -60,18 +60,18 @@ def create_map(map_str: str) -> "Map":
     # TODO: Task 1.1
 
     for i in range(rows):
+        x = lines[i].split()
         for j in range(cols):
-            x = lines[i].split()
             match x[j]:
                 case '.': game_map.map[i][j] = Tile.EMPTY
                 case '#': game_map.map[i][j] = Tile.ROCK
                 case '@': game_map.map[i][j] = Tile.BOMB
                 case '0':
                     game_map.map[i][j] = Tile.EMPTY
-                    game_map.tank_position_map[0] = (i+0.5, j+0.5)
+                    game_map.tank_position_map[0] = (j+0.5, i+0.5)
                 case '1':
                     game_map.map[i][j] = Tile.EMPTY
-                    game_map.tank_position_map[1] = (i+0.5, j+0.5)
+                    game_map.tank_position_map[1] = (j+0.5, i+0.5)
                 
 
     # TODO: Task 1.1 END
@@ -136,8 +136,12 @@ class Map:
         tile has changed.
         """
         # TODO: Task 1.2
-        self.map_diff = np.array(self.map != self.prev_map)
-        return self.map_diff
+        if self.prev_map is None:
+            bool_map = np.full_like(self.map, True, bool)
+        else:
+            bool_map =  np.array(self.map != self.prev_map)
+        self.prev_map = self.map.copy()
+        return bool_map
 
         # TODO: Task 1.2 END
 
@@ -191,15 +195,16 @@ class Map:
         :return: a dictionary or None
         """
         # TODO: Task 2.1
-        x_l = x - height/2; x_r = x + height/2
-        y_l = y - width/2; y_r = y + width/2
-        if not overlap((x_l, y_l, x_r, y_r), (0, 0, len(self.map)-1, len(self.map[0])-1)):
+        x_l = y - width/2; x_r = y + width/2
+        y_l = x - height/2; y_r = x + height/2
+        if not overlap((x_l, y_l, x_r, y_r), (0, 0, self.cols-1, self.rows-1)):
             return None
+        collisions = {}
         for i in range(int(x_l), int(x_r+1)):
             for j in range(int(y_l), int(y_r+1)):
                 if self.map[i][j] != Tile.EMPTY:
-                    return {(i,j): self.map[i][j]}
-        return {}
+                    collisions[(j, i)] = self.map[i][j]
+        return collisions
         # TODO: Task 2.1 END
 
     def collides_with_tank(
@@ -224,11 +229,14 @@ class Map:
         :return: the tank id that the object collides with, or None if the object does not collide with any tank
         """
         # TODO: Task 2.2
-        x_l = x - height/2; x_r = x + height/2
-        y_l = y - width/2; y_r = y + width/2
+        x_l = y - height/2; x_r = y + height/2
+        y_l = x - width/2; y_r = x + width/2
         for i in range(0,2):
-            x_t = Map.collides_with_tank[i][0]; y_t = Map.collides_with_tank[i][1]
-            if overlap((x_l, x_r, y_l, y_r), (x_t, x_t, y_t, y_t)):
+            y_t_l = self.tank_position_map[i][0]-0.25
+            y_t_r = self.tank_position_map[i][0]+0.25
+            x_t_l = self.tank_position_map[i][1]-0.25
+            x_t_r = self.tank_position_map[i][1]+0.25
+            if overlap((x_l, y_l, x_r, y_r), (x_t_l, y_t_l, x_t_r, y_t_r)):
                 return i
         return None
         # TODO: Task 2.2 END
@@ -305,8 +313,9 @@ class Map:
                 if x < 0 or y < 0 or x >= self.rows or y >= self.cols:
                     continue
                 if self.map[x][y] == Tile.BOMB:
-                    self.trigger_bomb(self, canvas, y, x, explode)
+                    self.trigger_bomb(canvas, y, x, explode)
                 self.map[x][y] = Tile.EMPTY
-        self.draw_on(canvas)
+                self.draw_on(canvas)
+        
 
         # TODO 3 END

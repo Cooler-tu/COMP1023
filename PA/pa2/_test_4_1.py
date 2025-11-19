@@ -96,7 +96,7 @@ class Test41(unittest.TestCase):
 
         def add_scores_to_log(*args, **kwargs):
             Test41.addLog(
-                f"update_score() called with score_a={Test41.game.scoreboard.score_tank_1} score_b={Test41.game.scoreboard.score_tank_2}"
+                f"update_score() called with score_tank_1={Test41.game.scoreboard.score_tank_1} score_tank_2={Test41.game.scoreboard.score_tank_2}"
             )
 
         Test41.game.scoreboard.update_score, o_us = (
@@ -113,7 +113,7 @@ class Test41(unittest.TestCase):
         Test41.game.destroy_tank(1)
         Test41.game.destroy_tank(1)
 
-        target_log = "update_score() called with score_a=0 score_b=1\nupdate_score() called with score_a=0 score_b=2\nupdate_score() called with score_a=0 score_b=3\nupdate_score() called with score_a=1 score_b=3\nupdate_score() called with score_a=2 score_b=3\nupdate_score() called with score_a=3 score_b=3\n"
+        target_log = "update_score() called with score_tank_1=0 score_tank_2=1\nupdate_score() called with score_tank_1=0 score_tank_2=2\nupdate_score() called with score_tank_1=0 score_tank_2=3\nupdate_score() called with score_tank_1=1 score_tank_2=3\nupdate_score() called with score_tank_1=2 score_tank_2=3\nupdate_score() called with score_tank_1=3 score_tank_2=3\n"
         self.assertEqual(Test41.log, target_log)
 
         Test41.game.scoreboard.update_score = o_us

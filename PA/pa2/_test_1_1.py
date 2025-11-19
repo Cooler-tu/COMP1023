@@ -18,21 +18,21 @@ class Test11(unittest.TestCase):
         cls.tk.destroy()
 
     def test_read_from__size_3_3(self):
-        game_map = create_map(". . .\n" ". . .\n" ". . .\n")
+        game_map = create_map("0 . .\n" ". . .\n" "1 . .\n")
         self.assertEqual(game_map.cols, 3)
         self.assertEqual(game_map.rows, 3)
 
     def test_read_from__size_10_10(self):
         game_map = create_map(
             ". . . . . . . . . .\n"
+            ". 0 . . . . . . . .\n"
             ". . . . . . . . . .\n"
             ". . . . . . . . . .\n"
             ". . . . . . . . . .\n"
             ". . . . . . . . . .\n"
             ". . . . . . . . . .\n"
             ". . . . . . . . . .\n"
-            ". . . . . . . . . .\n"
-            ". . . . . . . . . .\n"
+            ". . . . . . . . 1 .\n"
             ". . . . . . . . . .\n"
         )
         self.assertEqual(game_map.cols, 10)
@@ -40,13 +40,13 @@ class Test11(unittest.TestCase):
 
     def test_read_from__size_9_3(self):
         game_map = create_map(
-            ". . . . . . . . .\n" ". . . . . . . . .\n" ". . . . . . . . .\n"
+            ". 0 . . . . . . .\n" ". . . . . . . . .\n" ". . . . . . . 1 .\n"
         )
         self.assertEqual(game_map.cols, 9)
         self.assertEqual(game_map.rows, 3)
 
     def test_read_from__empty_tile(self):
-        game_map = create_map(". . .\n" ". . .\n" ". . .\n")
+        game_map = create_map("0 . .\n" ". . .\n" ". . 1\n")
 
         self.assertEqual(game_map.map[0][0], Tile.EMPTY)
         self.assertEqual(game_map.map[0][1], Tile.EMPTY)
@@ -59,7 +59,7 @@ class Test11(unittest.TestCase):
         self.assertEqual(game_map.map[2][2], Tile.EMPTY)
 
     def test_read_from__rock(self):
-        game_map = create_map(". . .\n" ". # .\n" ". . .\n")
+        game_map = create_map("0 . .\n" ". # .\n" ". . 1\n")
 
         self.assertEqual(game_map.map[0][0], Tile.EMPTY)
         self.assertEqual(game_map.map[0][1], Tile.EMPTY)
@@ -72,7 +72,7 @@ class Test11(unittest.TestCase):
         self.assertEqual(game_map.map[2][2], Tile.EMPTY)
 
     def test_read_from__bomb(self):
-        game_map = create_map(". . .\n" ". @ .\n" ". . .\n")
+        game_map = create_map("0 . .\n" ". @ .\n" ". . 1\n")
 
         self.assertEqual(game_map.map[0][0], Tile.EMPTY)
         self.assertEqual(game_map.map[0][1], Tile.EMPTY)

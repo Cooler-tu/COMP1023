@@ -20,6 +20,7 @@ class Test22(unittest.TestCase):
     def test_collides_with_tank__point(self):
         game_map = Map(3, 3)
         game_map.tank_position_map[0] = (1.5, 1.5)
+        game_map.tank_position_map[1] = (2.5, 2.5)
 
         self.assertEqual(None, game_map.collides_with_tank(0.5, 0.5))
         self.assertEqual(None, game_map.collides_with_tank(1.5, 0.5))
@@ -29,11 +30,12 @@ class Test22(unittest.TestCase):
         self.assertEqual(None, game_map.collides_with_tank(2.5, 1.5))
         self.assertEqual(None, game_map.collides_with_tank(0.5, 2.5))
         self.assertEqual(None, game_map.collides_with_tank(1.5, 2.5))
-        self.assertEqual(None, game_map.collides_with_tank(2.5, 2.5))
+        self.assertEqual(1, game_map.collides_with_tank(2.5, 2.5))
 
     def test_collides_with_tank__rect(self):
         game_map = Map(3, 3)
         game_map.tank_position_map[0] = (1.5, 1.5)
+        game_map.tank_position_map[1] = (2.5, 2.5)
 
         self.assertEqual(None, game_map.collides_with_tank(0.5, 0.5, 0.5, 0.5))
         self.assertEqual(None, game_map.collides_with_tank(1.5, 0.5, 0.5, 0.5))
@@ -43,11 +45,12 @@ class Test22(unittest.TestCase):
         self.assertEqual(None, game_map.collides_with_tank(2.5, 1.5, 0.5, 0.5))
         self.assertEqual(None, game_map.collides_with_tank(0.5, 2.5, 0.5, 0.5))
         self.assertEqual(None, game_map.collides_with_tank(1.5, 2.5, 0.5, 0.5))
-        self.assertEqual(None, game_map.collides_with_tank(2.5, 2.5, 0.5, 0.5))
+        self.assertEqual(1, game_map.collides_with_tank(2.5, 2.5, 0.5, 0.5))
 
     def test_collides_with_tank__partial(self):
         game_map = Map(3, 3)
         game_map.tank_position_map[0] = (1.5, 1.5)
+        game_map.tank_position_map[1] = (2.5, 2.5)
 
         self.assertEqual(0, game_map.collides_with_tank(0.75, 0.75, 1, 1))
         self.assertEqual(0, game_map.collides_with_tank(1.5, 0.75, 0.75, 0.75))
@@ -61,6 +64,7 @@ class Test22(unittest.TestCase):
     def test_collides_with_tank__inclusive(self):
         game_map = Map(3, 3)
         game_map.tank_position_map[0] = (1.5, 1.5)
+        game_map.tank_position_map[1] = (2.5, 2.5)
 
         self.assertEqual(0, game_map.collides_with_tank(0.75, 0.75, 0.5, 0.5))
         self.assertEqual(0, game_map.collides_with_tank(1.75, 0.75, 0.5, 0.5))
