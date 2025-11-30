@@ -64,7 +64,7 @@ class Game:
 
         This function does the following:
 
-        1. Increments the score of the opponent tank. If the tank_id is 0, the score of tank B (self.scoreboard.score_b) is incremented by 1. If the tank_id is 1, the score of tank A (self.scoreboard.score_a) is incremented by 1.
+        1. Increments the score of the opponent tank. If the tank_id is 0, the score of tank B (self.scoreboard.score_tank_2) is incremented by 1. If the tank_id is 1, the score of tank A (self.scoreboard.score_tank_1) is incremented by 1.
         2. Updates the score displayed on the scoreboard. (Hint: there is a function called update_score in a certain file. You need to call this function in a proper way to update the score.)
         3. Kills the tank with the given tank_id by calling the `kill` method of the tank.
         4. Resets the game by calling the `reset_game` method.
@@ -78,7 +78,10 @@ class Game:
         else:
             self.scoreboard.score_tank_1 += 1
         self.scoreboard.update_score()
-        self.tanks[tank_id].kill()
+        for i in range(0,2):
+            if tank_id == self.tanks[i].tank_id:
+                self.tanks[i].kill()
+                break
         self.reset_game()
 
         # TODO 4.1 END
@@ -104,9 +107,10 @@ class Game:
 
         # TODO 4.2
         self.unbind_keys()
-        for d in Direction:
-            self.tanks[0].stop_tank(d)
-            self.tanks[1].stop_tank(d)
+        
+        for tank in list(self.tanks):
+            for d in Direction:
+                tank.stop_tank(d)
         self.map = create_map(read_from_file(self.map_file))
         self.tanks = [
             Tank(self, x, y, i) for i, (x, y) in self.map.tank_position_map.items()
@@ -123,63 +127,70 @@ class Game:
         Binds the keys for tank 1 and tank 2.
         """
 
-        from sprite import Direction
+        from sprite import Direction            
 
+        if self.tanks[0].tank_id == 0:
+            tank0 = self.tanks[0]
+            tank1 = self.tanks[1]
+        else:
+            tank1 = self.tanks[0]
+            tank0 = self.tanks[1]
+            
         # Bind Keys for Tank 1
         self.window.bind(
-            "<KeyPress-w>", lambda _: self.tanks[0].launch_tank(Direction.N)
+            "<KeyPress-w>", lambda _: tank0.launch_tank(Direction.N)
         )
         self.window.bind(
-            "<KeyPress-s>", lambda _: self.tanks[0].launch_tank(Direction.S)
+            "<KeyPress-s>", lambda _: tank0.launch_tank(Direction.S)
         )
         self.window.bind(
-            "<KeyPress-a>", lambda _: self.tanks[0].launch_tank(Direction.W)
+            "<KeyPress-a>", lambda _: tank0.launch_tank(Direction.W)
         )
         self.window.bind(
-            "<KeyPress-d>", lambda _: self.tanks[0].launch_tank(Direction.E)
+            "<KeyPress-d>", lambda _: tank0.launch_tank(Direction.E)
         )
         self.window.bind(
-            "<KeyRelease-w>", lambda _: self.tanks[0].stop_tank(Direction.N)
+            "<KeyRelease-w>", lambda _: tank0.stop_tank(Direction.N)
         )
         self.window.bind(
-            "<KeyRelease-s>", lambda _: self.tanks[0].stop_tank(Direction.S)
+            "<KeyRelease-s>", lambda _: tank0.stop_tank(Direction.S)
         )
         self.window.bind(
-            "<KeyRelease-a>", lambda _: self.tanks[0].stop_tank(Direction.W)
+            "<KeyRelease-a>", lambda _: tank0.stop_tank(Direction.W)
         )
         self.window.bind(
-            "<KeyRelease-d>", lambda _: self.tanks[0].stop_tank(Direction.E)
+            "<KeyRelease-d>", lambda _: tank0.stop_tank(Direction.E)
         )
-        self.window.bind("<KeyPress-f>", lambda _: self.tanks[0].fire())
+        self.window.bind("<KeyPress-f>", lambda _: tank0.fire())
 
         # Bind Keys for Tank 2
         self.window.bind(
-            "<KeyPress-Up>", lambda _: self.tanks[1].launch_tank(Direction.N)
+            "<KeyPress-Up>", lambda _: tank1.launch_tank(Direction.N)
         )
         self.window.bind(
-            "<KeyPress-Down>", lambda _: self.tanks[1].launch_tank(Direction.S)
+            "<KeyPress-Down>", lambda _: tank1.launch_tank(Direction.S)
         )
         self.window.bind(
-            "<KeyPress-Left>", lambda _: self.tanks[1].launch_tank(Direction.W)
+            "<KeyPress-Left>", lambda _: tank1.launch_tank(Direction.W)
         )
         self.window.bind(
-            "<KeyPress-Right>", lambda _: self.tanks[1].launch_tank(
+            "<KeyPress-Right>", lambda _: tank1.launch_tank(
                 Direction.E)
         )
         self.window.bind(
-            "<KeyRelease-Up>", lambda _: self.tanks[1].stop_tank(Direction.N)
+            "<KeyRelease-Up>", lambda _: tank1.stop_tank(Direction.N)
         )
         self.window.bind(
-            "<KeyRelease-Down>", lambda _: self.tanks[1].stop_tank(Direction.S)
+            "<KeyRelease-Down>", lambda _: tank1.stop_tank(Direction.S)
         )
         self.window.bind(
-            "<KeyRelease-Left>", lambda _: self.tanks[1].stop_tank(Direction.W)
+            "<KeyRelease-Left>", lambda _: tank1.stop_tank(Direction.W)
         )
         self.window.bind(
-            "<KeyRelease-Right>", lambda _: self.tanks[1].stop_tank(
+            "<KeyRelease-Right>", lambda _: tank1.stop_tank(
                 Direction.E)
         )
-        self.window.bind("<KeyPress-space>", lambda _: self.tanks[1].fire())
+        self.window.bind("<KeyPress-space>", lambda _: tank1.fire())
 
     def unbind_keys(self):
         """

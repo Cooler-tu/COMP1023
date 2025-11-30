@@ -1,10 +1,7 @@
-import sys
-print("Python 路径:", sys.executable)
-print("Python 版本:", sys.version)
+import pandas as pd
+a1 = pd.Series([1,2,3,4], ['a', 'b', 'c', 'd'])
+a2 = pd.Series([5,6,7,8], ['a', 'b', 'c', 'd'])
+a3 = pd.Series([9,10,11,12], ['a','c', 'b', 'e'])
 
-try:
-    import numpy as np
-    print("NumPy 版本:", np.__version__)
-    print("NumPy 安装成功！")
-except ImportError as e:
-    print("导入 NumPy 失败:", e)
+data = pd.DataFrame({'A': a1, 'B': a2, 'C': a3})
+print(data)

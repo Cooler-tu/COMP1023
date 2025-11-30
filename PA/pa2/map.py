@@ -195,15 +195,25 @@ class Map:
         :return: a dictionary or None
         """
         # TODO: Task 2.1
-        x_l = y - width/2; x_r = y + width/2
-        y_l = x - height/2; y_r = x + height/2
-        if not overlap((x_l, y_l, x_r, y_r), (0, 0, self.cols-1, self.rows-1)):
+        x_l = y - height/2; x_r = y + height/2
+        y_l = x - width/2; y_r = x + width/2
+        # print(f"{x_l} {x_r} {y_l} {y_r}")
+        if x_l < 0 or x_r > self.rows or y_l < 0 or y_r > self.cols:
             return None
         collisions = {}
+        '''
         for i in range(int(x_l), int(x_r+1)):
             for j in range(int(y_l), int(y_r+1)):
                 if self.map[i][j] != Tile.EMPTY:
                     collisions[(j, i)] = self.map[i][j]
+        
+        '''
+
+        for i in range(0, self.rows):
+            for j in range(0, self.cols):
+                if overlap((x_l, y_l, x_r, y_r), (i,j,i+1,j+1)) and self.map[i][j] != Tile.EMPTY:
+                    collisions[(j, i)] = self.map[i][j]
+
         return collisions
         # TODO: Task 2.1 END
 
@@ -232,10 +242,10 @@ class Map:
         x_l = y - height/2; x_r = y + height/2
         y_l = x - width/2; y_r = x + width/2
         for i in range(0,2):
-            y_t_l = self.tank_position_map[i][0]-0.25
-            y_t_r = self.tank_position_map[i][0]+0.25
-            x_t_l = self.tank_position_map[i][1]-0.25
-            x_t_r = self.tank_position_map[i][1]+0.25
+            y_t_l = self.tank_position_map[i][0]-0.5
+            y_t_r = self.tank_position_map[i][0]+0.5
+            x_t_l = self.tank_position_map[i][1]-0.5
+            x_t_r = self.tank_position_map[i][1]+0.5
             if overlap((x_l, y_l, x_r, y_r), (x_t_l, y_t_l, x_t_r, y_t_r)):
                 return i
         return None
