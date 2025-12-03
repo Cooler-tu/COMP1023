@@ -1,7 +1,25 @@
-import pandas as pd
-a1 = pd.Series([1,2,3,4], ['a', 'b', 'c', 'd'])
-a2 = pd.Series([5,6,7,8], ['a', 'b', 'c', 'd'])
-a3 = pd.Series([9,10,11,12], ['a','c', 'b', 'e'])
+def cal1(x, k, ans):
+    if(len(x) == k):
+        return ans
+    if(x[k].find('*') != -1):
+        s = x[k].split('*')
+        ans_m = cal2(s, 0, 1)
+        ans += ans_m
+    else:
+        ans += int(x[k])
+    return cal1(x, k+1, ans)
 
-data = pd.DataFrame({'A': a1, 'B': a2, 'C': a3})
-print(data)
+def cal2(x, k, ans):
+    if len(x) == k:
+        return ans
+    return cal2(x, k+1, ans*int(x[k]))
+
+
+def main():
+    s = input()
+    x = s.split('+')
+    print(cal1(x, 0, 0))
+
+
+if __name__ == "__main__":
+    main()
