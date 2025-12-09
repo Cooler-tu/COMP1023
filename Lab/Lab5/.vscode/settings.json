@@ -1,0 +1,33 @@
+{
+  // 完全禁用所有自动提示
+  "editor.quickSuggestions": {
+    "comments": "off",
+    "strings": "off",
+    "other": "off"
+  },
+  "editor.suggestOnTriggerCharacters": false,
+  "editor.wordBasedSuggestions": "off",
+  "editor.suggest.showWords": false,
+  "editor.suggest.showSnippets": false,
+  "editor.suggest.showClasses": false,
+  "editor.suggest.showFunctions": false,
+  "editor.suggest.showVariables": false,
+  
+  // 针对特定文件类型也禁用
+  "[plaintext]": {
+    "editor.quickSuggestions": {
+      "comments": "off",
+      "strings": "off",
+      "other": "off"
+    },
+    "editor.suggestOnTriggerCharacters": false
+  },
+  "[log]": {
+    "editor.quickSuggestions": {
+      "comments": "off",
+      "strings": "off",
+      "other": "off"
+    },
+    "editor.suggestOnTriggerCharacters": false
+  }
+}
